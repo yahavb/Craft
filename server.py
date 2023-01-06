@@ -19,7 +19,8 @@ import datetime
 from datetime import datetime, timezone
 from datetime import datetime as dt
 
-cmd = 'rm -rf /tmp/healthy'
+#cmd = 'rm -rf /tmp/healthy'
+cmd = '/craft/release_gs.sh'
 
 user=os.environ['PGUSER']
 password=os.environ['PGPASSWORD']
