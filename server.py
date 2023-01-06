@@ -243,13 +243,13 @@ class Handler(socketserver.BaseRequestHandler):
         thread.start()
     def agones_health(self):
       global AGONES_HEALTH_THREAD
-      log('in agones_health:self.running',self.running,' :AGONES_HEALTH_THREAD:',AGONES_HEALTH_THREAD)
+      #log('in agones_health:self.running',self.running,' :AGONES_HEALTH_THREAD:',AGONES_HEALTH_THREAD)
       if AGONES_HEALTH_THREAD == 1:
         try:
           headers={'Content-Type':'application/json'}
           url='http://localhost:'+AGONES_SDK_HTTP_PORT+'/health'
           r=requests.post(url,headers=headers,json={})
-          log('in Handler:agones_health:url:',url, ' response.status_code:',r.status_code,' response.headers:',r.headers)
+          #log('in Handler:agones_health:url:',url, ' response.status_code:',r.status_code,' response.headers:',r.headers)
         except Exception as error:
           log('agones_health:error',error)
 
@@ -384,8 +384,8 @@ class Model(object):
         if IS_AGONES == 'True':
           if 'guest' not in client.nick:
             self.agones_player(client.nick,'disconnect')
-          else:
-            log('on_disconnect:skipping:',client.nick)
+          #else:
+          #  log('on_disconnect:skipping:',client.nick)
         self.clients.remove(client)
         self.send_disconnect(client)
 
