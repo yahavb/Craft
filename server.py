@@ -303,7 +303,7 @@ class Model(object):
             (re.compile(r'^/pq\s+(-?[0-9]+)\s*,?\s*(-?[0-9]+)$'), self.on_pq),
             (re.compile(r'^/help(?:\s+(\S+))?$'), self.on_help),
             (re.compile(r'^/list$'), self.on_list),
-            (re.compile(r'^/getservers$'), self.on_get_servers),
+            (re.compile(r'^/servers$'), self.on_get_servers),
         ]
     def start(self):
         thread = threading.Thread(target=self.run)
@@ -395,7 +395,7 @@ class Model(object):
         params = []
         rows = list(pg_read(sql,params))
         log("in on_get_servers:availiable endpoints",rows)
-        client.send(TALK, rows[0][0])
+        client.send(TALK, rows)
 
     def on_version(self, client, version):
         if client.version is not None:
