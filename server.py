@@ -302,6 +302,7 @@ class Model(object):
             (re.compile(r'^/pq\s+(-?[0-9]+)\s*,?\s*(-?[0-9]+)$'), self.on_pq),
             (re.compile(r'^/help(?:\s+(\S+))?$'), self.on_help),
             (re.compile(r'^/list$'), self.on_list),
+            (re.compile(r'^/getservers$'), self.on_get_servers),
         ]
     def start(self):
         thread = threading.Thread(target=self.run)
