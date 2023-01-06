@@ -391,6 +391,11 @@ class Model(object):
 
     def on_get_servers(self,client):
         client.send(TALK, 'Availible servers for you:')
+        sql = """select endpoint from game_server_pool where status = 1;"""
+        params = []
+        rows = list(pg_read(sql,params))
+        log("in on_get_servers:availiable endpoints",rows)
+        client.send(TALK, rows[0][0])
 
     def on_version(self, client, version):
         if client.version is not None:
