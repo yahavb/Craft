@@ -396,8 +396,7 @@ class Model(object):
         rows = list(pg_read(sql,params))
         log("in on_get_servers:availiable endpoints",rows)
         for row in rows:
-          log("in on_get_servers:row:",row," rows[row]:",rows[row])
-          client.send(TALK, rows[row])
+          client.send(TALK, row)
 
     def on_version(self, client, version):
         if client.version is not None:
