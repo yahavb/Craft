@@ -395,7 +395,8 @@ class Model(object):
         params = []
         rows = list(pg_read(sql,params))
         log("in on_get_servers:availiable endpoints",rows)
-        client.send(TALK, rows)
+        for row in rows:
+          client.send(TALK, rows[row])
 
     def on_version(self, client, version):
         if client.version is not None:
@@ -663,7 +664,7 @@ class Model(object):
         if topic is None:
             client.send(TALK, 'Type "t" to chat. Type "/" to type commands:')
             client.send(TALK, '/goto [NAME], /help [TOPIC], /list, /login NAME, /logout, /nick')
-            client.send(TALK, '/offline [FILE], /online HOST [PORT], /pq P Q, /spawn, /view N')
+            client.send(TALK, '/offline [FILE], /online HOST [PORT], /pq P Q, /spawn, /view N /servers')
             return
         topic = topic.lower().strip()
         if topic == 'goto':
@@ -700,6 +701,9 @@ class Model(object):
         elif topic == 'view':
             client.send(TALK, 'Help: /view N')
             client.send(TALK, 'Set viewing distance, 1 - 24.')
+        elif topic == 'servers':
+            client.send(TALK, 'Help: /servers')
+            client.send(TALK, 'List availiable servers')
     def on_list(self, client):
         client.send(TALK,
             'Players: %s' % ', '.join(x.nick for x in self.clients))
