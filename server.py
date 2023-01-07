@@ -19,7 +19,8 @@ import datetime
 from datetime import datetime, timezone
 from datetime import datetime as dt
 
-cmd = 'rm -rf /tmp/healthy'
+#cmd = 'rm -rf /tmp/healthy'
+cmd = '/craft/release_gs.sh'
 
 user=os.environ['PGUSER']
 password=os.environ['PGPASSWORD']
@@ -242,13 +243,13 @@ class Handler(socketserver.BaseRequestHandler):
         thread.start()
     def agones_health(self):
       global AGONES_HEALTH_THREAD
-      log('in agones_health:self.running',self.running,' :AGONES_HEALTH_THREAD:',AGONES_HEALTH_THREAD)
+      #log('in agones_health:self.running',self.running,' :AGONES_HEALTH_THREAD:',AGONES_HEALTH_THREAD)
       if AGONES_HEALTH_THREAD == 1:
         try:
           headers={'Content-Type':'application/json'}
           url='http://localhost:'+AGONES_SDK_HTTP_PORT+'/health'
           r=requests.post(url,headers=headers,json={})
-          log('in Handler:agones_health:url:',url, ' response.status_code:',r.status_code,' response.headers:',r.headers)
+          #log('in Handler:agones_health:url:',url, ' response.status_code:',r.status_code,' response.headers:',r.headers)
         except Exception as error:
           log('agones_health:error',error)
 
@@ -302,6 +303,7 @@ class Model(object):
             (re.compile(r'^/pq\s+(-?[0-9]+)\s*,?\s*(-?[0-9]+)$'), self.on_pq),
             (re.compile(r'^/help(?:\s+(\S+))?$'), self.on_help),
             (re.compile(r'^/list$'), self.on_list),
+            (re.compile(r'^/servers$'), self.on_get_servers),
         ]
     def start(self):
         thread = threading.Thread(target=self.run)
@@ -382,13 +384,19 @@ class Model(object):
         if IS_AGONES == 'True':
           if 'guest' not in client.nick:
             self.agones_player(client.nick,'disconnect')
-          else:
-            log('on_disconnect:skipping:',client.nick)
+          #else:
+          #  log('on_disconnect:skipping:',client.nick)
         self.clients.remove(client)
         self.send_disconnect(client)
 
     def on_get_servers(self,client):
         client.send(TALK, 'Availible servers for you:')
+        sql = """select pod,endpoint from game_server_pool where status = 1;"""
+        params = []
+        rows = list(pg_read(sql,params))
+        log("in on_get_servers:availiable endpoints",rows)
+        for row in rows:
+          client.send(TALK, row)
 
     def on_version(self, client, version):
         if client.version is not None:
@@ -656,7 +664,7 @@ class Model(object):
         if topic is None:
             client.send(TALK, 'Type "t" to chat. Type "/" to type commands:')
             client.send(TALK, '/goto [NAME], /help [TOPIC], /list, /login NAME, /logout, /nick')
-            client.send(TALK, '/offline [FILE], /online HOST [PORT], /pq P Q, /spawn, /view N')
+            client.send(TALK, '/offline [FILE], /online HOST [PORT], /pq P Q, /spawn, /view N /servers')
             return
         topic = topic.lower().strip()
         if topic == 'goto':
@@ -693,6 +701,9 @@ class Model(object):
         elif topic == 'view':
             client.send(TALK, 'Help: /view N')
             client.send(TALK, 'Set viewing distance, 1 - 24.')
+        elif topic == 'servers':
+            client.send(TALK, 'Help: /servers')
+            client.send(TALK, 'List availiable servers')
     def on_list(self, client):
         client.send(TALK,
             'Players: %s' % ', '.join(x.nick for x in self.clients))

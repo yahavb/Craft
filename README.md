@@ -23,7 +23,9 @@ This fork uses postgresql instead of sqlite so some of the sql were adopted to p
 To spin an aurora postgresql use https://github.com/aws-samples/amazon-aurora-call-to-amazon-sagemaker-sample/tree/master/multiplayer-matchmaker/aurora-pg-cdk
 
 ### Making changes 
+```bash
 branch=mybranch && git checkout -b $branch && git add server.py&&git commit -m $branch && git push --set-upstream origin $branch
+```
 To build a new image manually, use https://github.com/aws-samples/containerized-game-servers/blob/master/craft/ci/craft-server/serverfiles/build.sh. 
 In `aws-samples/containerized-game-servers/blob/master/craft/ci/craft-server/serverfiles`
 ```bash
